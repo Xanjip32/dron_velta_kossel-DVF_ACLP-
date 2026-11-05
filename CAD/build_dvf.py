@@ -20,7 +20,7 @@ import Part
 V = App.Vector
 ROOT = Path(__file__).resolve().parent.parent
 P = json.loads((ROOT / "CAD" / "params.json").read_text())
-if len(sys.argv) > 1:
+if __name__ == "__main__" and len(sys.argv) > 1:
     P.update(json.loads(Path(sys.argv[1]).read_text()))
 
 M3, M3_TAP, M4, M5 = 3.4, 2.9, 4.5, 5.4
@@ -279,7 +279,7 @@ def groove_clamp():
     return c.fuse(key)
 
 
-def hotend_shroud():
+def hotend_shroud(printable=True):
     """30 mm fan shroud for the V6-style heatsink; hangs under the effector."""
     e = P["effector"]
     _, slot_ang = tool_frame()
@@ -306,11 +306,12 @@ def hotend_shroud():
     ear = ear.cut(cyl(M3_TAP / 2, 7, ex, ey, -1))
     b = b.fuse(ear).cut(cyl(e["heatsink_d"] / 2 + 0.4, H + 2, 0, 0, -1))
     # print upside down: flip so the effector face is on the bed
-    b.rotate(V(0, 0, H / 2), V(1, 0, 0), 180)
+    if printable:
+        b.rotate(V(0, 0, H / 2), V(1, 0, 0), 180)
     return b.removeSplitter()
 
 
-def part_fan_duct():
+def part_fan_duct(printable=True):
     """Slides onto a 5015 blower outlet and aims a flat jet at the nozzle tip."""
     d = P["duct"]
     w = 1.6
@@ -334,6 +335,8 @@ def part_fan_duct():
     duct = outer.cut(inner)
     ear = box(iw / 2 + w, 0, -4, 10, 6, 8).cut(cyl(M3 / 2, 8, iw / 2 + w + 5, 3, -5, (0, 0, 1)))
     duct = duct.fuse(ear)
+    if not printable:
+        return duct
     duct.rotate(V(0, 0, 0), V(1, 0, 0), -90)  # inlet face down on the bed
     bb = duct.BoundBox
     duct.translate(V(0, 0, -bb.ZMin))
@@ -389,7 +392,7 @@ def bowden_mount():
     return s.removeSplitter()
 
 
-def spool_holder():
+def spool_holder(printable=True):
     ext = P["frame"]["extrusion"]
     base = box(-ext / 2, 0, 0, ext, 50, 6)
     base = base.cut(cyl(M4 / 2, 8, 0, 12, -1)).cut(cyl(M4 / 2, 8, 0, 38, -1))
@@ -397,6 +400,8 @@ def spool_holder():
     rod = cyl(9, 75, 0, 45, 90, (0, 1, 0)).cut(box(-10, 40, 90 - 10, 20, 100, 4))
     lip = cyl(16, 4, 0, 116, 90, (0, 1, 0))
     s = base.fuse(arm).fuse(rod).fuse(lip)
+    if not printable:
+        return s
     s.rotate(V(0, 0, 0), V(0, 1, 0), 90)  # print on its side for strength
     bb = s.BoundBox
     s.translate(V(-bb.XMin, 0, -bb.ZMin))
@@ -453,4 +458,5 @@ def main():
         print("%-12s %-26s x%-2d solids=%d vol=%scm3 bbox=%s watertight=%s" % r)
 
 
-main()
+if __name__ == "__main__":
+    main()

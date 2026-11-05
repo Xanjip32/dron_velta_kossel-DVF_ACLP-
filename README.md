@@ -6,6 +6,16 @@ A Doron Velta style conversion kit for the **Anycubic Kossel Linear Plus**. It k
 * **Stock hardware stays:** 2020 frame, plastic corners, MGN12 linear rails and carriages, 269 mm diagonal arms, motors, belts, heated bed, hotend, Bowden extruder, 12 V PSU and clip-on probe.
 * **Everything is parametric.** Measure your printer, edit [`CAD/params.json`](CAD/params.json), and run one script to rebuild every STL/STEP file.
 
+## Full assembly
+
+![assembly](images/assembly_full.png)
+
+Open **`CAD/DVF_ACLP_Assembly.step`** in SolidWorks / Fusion / Onshape / FreeCAD, or `CAD/DVF_ACLP_Assembly.FCStd` in FreeCAD. Every printed part (red in the render) is mounted on a simplified stock Kossel Linear Plus: towers, rails, corners, MGN12 rails and carriages, 269 mm arms, bed, motors, hotend, fans, SKR Pico, Pi 3B, extruder and spool. The stock parts are simple blocks for checking fit. They are not exact Anycubic models. The parts are grouped as `Printed_*` and `Stock_*`.
+
+<img src="images/assembly_toolhead.png" width="300"/>
+
+## Printed parts
+
 ![parts](images/parts_overview.png)
 
 > ⚠️ **Status: v0.1, not fit-tested on a real printer.** Dimensions come from the Anycubic manual, Klipper's Kossel Plus config and common part standards (2020, E3D V6 groove mount, 5015/3010/4010 fans, Pi hole pattern). **Print `00_Fit_Test` first** and check the measurements below before printing everything.
@@ -49,7 +59,9 @@ Print settings: PETG or ABS/ASA, 0.2 mm layers, 4 walls, 30–40 % infill. Use A
 ```
 CAD/build_dvf.py      parametric generator (FreeCAD 1.x Python)
 CAD/params.json       all dimensions
-CAD/DVF_ACLP.FCStd    FreeCAD document with every part
+CAD/DVF_ACLP.FCStd    FreeCAD document with every part (print orientation)
+CAD/DVF_ACLP_Assembly.step / .FCStd   full assembled printer
+CAD/build_assembly.py builds the assembly from the same params
 CAD/STEP/*.step       editable solids (import into SolidWorks / Fusion / Onshape)
 STLs/**               print files, _xN = quantity
 Firmware/printer.cfg  Klipper config for SKR Pico on the Kossel Linear Plus
@@ -61,6 +73,7 @@ Rebuild after changing params:
 
 ```
 "C:\Program Files\FreeCAD 1.1\bin\python.exe" CAD/build_dvf.py
+"C:Program FilesFreeCAD 1.1binpython.exe" CAD/build_assembly.py
 ```
 
 ## Credits and license
