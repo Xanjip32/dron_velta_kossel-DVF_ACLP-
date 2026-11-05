@@ -73,7 +73,7 @@ Rebuild after changing params:
 
 ```
 "C:\Program Files\FreeCAD 1.1\bin\python.exe" CAD/build_dvf.py
-"C:Program FilesFreeCAD 1.1binpython.exe" CAD/build_assembly.py
+"C:\Program Files\FreeCAD 1.1\bin\python.exe" CAD/build_assembly.py
 ```
 
 ## Credits and license
