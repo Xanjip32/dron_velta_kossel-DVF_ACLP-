@@ -112,5 +112,13 @@
     "pillar_seg": 160,
     "bed_gap": 8,
     "bed_mount_r": 100
+  },
+  "spool_arm": {
+    "length": 125,
+    "width": 14,
+    "height": 24,
+    "z": 30,
+    "lip": 12,
+    "brace": 45
   }
 }

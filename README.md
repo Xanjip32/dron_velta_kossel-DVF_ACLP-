@@ -21,7 +21,7 @@ Colours: **red = printed parts, black = stock/bought parts** (frame, rails, moto
   * Bottom: `bed_deck` panel under the bed (the inner cover), with 3 bed standoffs and a hole for the bed wires.
   * Top: the top deck panel holds the electronics, `corner_top_cap` ×3 fill the corners, and a **`lid`** panel with a hex vent field covers everything.
 * **Pillar covers:** 12 clip-on segments, 4 per tower, cover the outer face of each tower. They are hollow, so the 12 V and toolhead cables run inside the tower A pillar.
-* **Side spool + extruder bracket:** bolts to the flat outer face of the tower B top corner and carries the stock NEMA17 Bowden extruder and the spool arm.
+* **Side spool + extruder bracket:** bolts to the flat outer face of the tower B top corner with 4× M4. It carries the stock NEMA17 Bowden extruder and a **flat-bar spool arm** (Doron Velta style). The 125 mm bar runs sideways along the frame face and has lightening windows, a brace underneath and a raised end stop. The spool hangs outside the frame, clear of the arms. Change `spool_arm` in `params.json` for a shorter or stronger bar.
 
 ### Airflow
 
@@ -60,7 +60,7 @@ With these defaults, Klipper starts at `delta_radius ≈ 122.8` with `arm_length
 | Base_Power | power_inlet_box, psu_bracket, psu_terminal_cover, bed_standoff | 1, 1, 1, 3 | |
 | Top_Electronics | skr_pico_pi3b_tray, top_channel + lid | 1, 1 + 1 | |
 | Toolhead | effector_v6, groove_clamp, dv_shroud, dv_duct_4010 | 1, 1, 1, 2 | ABS/ASA |
-| Extruder | side_spool_extruder_bracket | 1 | Tower B top corner, 4× M4 into heat-set inserts |
+| Extruder | side_spool_extruder_bracket | 1 | Tower B top corner, 4× M4 into heat-set inserts. Already oriented to print lying on its back plate. PETG/ABS, 6 walls, 40 % infill (it carries the spool). |
 | Misc | cable_clip_2020 | 8 | |
 | **DXFs** | bottom_panel, bed_deck_panel, top_panel, lid_panel | 1 each | 3 mm black ACM or plywood, about 430 × 370 mm |
 

@@ -188,9 +188,12 @@ aB = TOWERS["B"]
 o, ex, ey, ez = corner_frame(aB)
 bo = o + ex * c_["truncate"] + Z * Z_TC
 bx_, by_ = ex * -1, ey * -1
-add("Printed_Extruder", "side_spool_extruder_bracket", place(D.side_spool_extruder(), bo, bx_, by_, Z))
+add("Printed_Extruder", "side_spool_extruder_bracket", place(D.side_spool_extruder(printable=False), bo, bx_, by_, Z))
 add("Stock_Extruder", "extruder_nema17", place(box(7, 24, 4, 42, 40, 42), bo, bx_, by_, Z))
-spool = cyl(100, 65, 42, -10, 46, (1, 0, 0)).cut(cyl(27, 70, 40, -10, 46, (1, 0, 0)))
+sa = P["spool_arm"]
+sd = V(math.cos(math.radians(-30)), math.sin(math.radians(-30)), 0)
+sc = V(2, -15, 0) + sd * (sa["length"] - 45) + Z * (sa["z"] + sa["height"] - 27)
+spool = Part.makeCylinder(100, 65, sc - sd * 32.5, sd).cut(Part.makeCylinder(27, 70, sc - sd * 35, sd))
 add("Stock_Extruder", "filament_spool_1kg", place(spool, bo, bx_, by_, Z))
 
 # ================================================================ motion + toolhead

@@ -103,7 +103,7 @@ def pillar_cover():
     return p.removeSplitter()
 
 
-def side_spool_extruder():
+def side_spool_extruder(printable=True):
     """Bolts to the flat outer face of a top corner: NEMA17 Bowden extruder + spool arm."""
     b = box(0, -24, 0, 5, 48, 56)
     for y in (-14, 14):
@@ -117,12 +117,26 @@ def side_spool_extruder():
     gus = prism_xy([(5, 0), (40, 0), (5, 35)], 0, 4)
     gus.rotate(V(0, 0, 0), V(1, 0, 0), 90)
     gus.translate(V(0, 19, 2 + 35))
-    rod = cyl(9, 110, 5, -10, 46, (1, 0, 0)).cut(box(0, -20, 46 - 9 - 1, 120, 20, 3))
-    lip = cyl(16, 4, 111, -10, 46, (1, 0, 0))
-    brace = prism_xy([(5, 0), (60, 0), (5, 40)], 0, 6)
-    brace.rotate(V(0, 0, 0), V(1, 0, 0), 90)
-    brace.translate(V(0, -7, 2))
-    return fuse_all([b, ep, rod, lip, brace]).removeSplitter()
+    # flat-bar spool arm (DV style): runs sideways along the frame face, 30 deg off the plate
+    sa = P["spool_arm"]
+    L, bw, bh, z0 = sa["length"], sa["width"], sa["height"], sa["z"]
+    beam = box(0, -bw / 2, z0, L, bw, bh)
+    n_h = int((L - 40) // 26)
+    for k in range(n_h):                                      # lightening windows
+        beam = beam.cut(box(22 + k * 26, -bw / 2 - 1, z0 + 6, 16, bw + 2, bh - 12))
+    beam = beam.fuse(box(L - 6, -bw / 2, z0, 6, bw, bh + sa["lip"]))   # spool end stop
+    web = prism_xy([(0, z0 + 2), (sa["brace"], z0 + 2), (0, 4)], 0, bw - 4)
+    web.rotate(V(0, 0, 0), V(1, 0, 0), 90)
+    web.translate(V(0, bw / 2 - 2, 0))
+    arm = beam.fuse(web)
+    arm.rotate(V(0, 0, 0), V(0, 0, 1), -30)
+    arm.translate(V(2, -15, 0))
+    s = fuse_all([b, ep, arm]).removeSplitter()
+    if printable:   # lie on the back of the mounting plate: arm rises at 60 deg, no supports
+        s.rotate(V(0, 0, 0), V(0, 1, 0), -90)
+        bb = s.BoundBox
+        s.translate(V(-bb.XMin, -bb.YMin, -bb.ZMin))
+    return s
 
 
 def bed_standoff():
