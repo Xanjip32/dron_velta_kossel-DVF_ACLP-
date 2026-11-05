@@ -60,15 +60,23 @@ With these defaults, Klipper starts at `delta_radius ≈ 122.8` with `arm_length
 | Wiring | tower_channel + lid | 4 + 4 | Tower A, M4 + T-nuts |
 | Wiring | top_channel + lid | 1 + 1 | On the top panel |
 | Wiring | cable_clip_2020 | 8 | |
-| Toolhead | effector_v6, groove_clamp, hotend_shroud_3010, part_fan_duct_5015 | 1 each | Temporary. See the toolhead note. |
+| Toolhead | effector_v6, groove_clamp, dv_shroud, logo_badge_toolhead | 1 each | ABS/ASA. See the toolhead section. |
+| Toolhead | dv_duct_4010 | 2 | ABS/ASA, push-fit on the blowers |
 | Extruder | bowden_extruder_mount, spool_holder | 1 each | On the top panel |
 | **DXFs** | bottom_panel, top_panel | 1 each | 3 mm ACM or 4 mm plywood, CNC/laser/jigsaw (about 430 × 370 mm) |
 
 All printed parts fit inside the Kossel's Ø230 mm print area. Use PETG at minimum, and ABS/ASA for the toolhead and the power inlet box.
 
-## Toolhead
+## Toolhead (DV style, stock arms)
 
-Doron Velta R2 uses **[CraneFly by chirpy](https://github.com/chirpy2605/voron/tree/main/general/CraneFly)**, and before that the MiniSB. CraneFly is built for the FLSUN Q5-style magnetic-ball arms that Doron Velta uses (215 mm). The Kossel's stock 269 mm arms use a different joint, so CraneFly won't bolt onto your arms as they are. The included `effector_v6` works with your stock arms until you choose a toolhead.
+Doron Velta R2 uses **[CraneFly by chirpy](https://github.com/chirpy2605/voron/tree/main/general/CraneFly)**, which needs FLSUN Q5-style magnetic arms. This kit has its own **Doron Velta style toolhead that keeps your stock 269 mm Kossel arms and full print size**:
+
+* `effector_v6` + `groove_clamp`: the stock arm joints bolt on (`effector.arm_spacing`). The V6-style hotend slides in sideways and the clamp locks it.
+* `dv_shroud`: a chamfered hex shroud that hides the heatsink and heater block. It has a front **3010** fan, two faces for **4010 blowers**, and a pocket for the logo badge. Print it effector-face down.
+* `dv_duct_4010` ×2: push-fit on each blower outlet, giving two jets at the nozzle.
+* `logo_badge_toolhead`: glue into the shroud pocket.
+
+Wire both blowers in parallel to FAN1 (part cooling) and the 3010 to FAN2.
 
 ## Files
 

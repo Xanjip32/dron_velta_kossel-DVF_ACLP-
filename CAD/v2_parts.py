@@ -295,3 +295,86 @@ def write_dxf(face, path):
         out += ["0", "SEQEND"]
     out += ["0", "ENDSEC", "0", "EOF"]
     Path(path).write_text("\n".join(out) + "\n")
+
+
+# ================================================================ v2: DV-style toolhead (stock 269 mm arms)
+def _th_frame():
+    slot = tool_frame()[1]
+    return dict(slot=slot, fan=slot + 90, blowers=(slot + 150, slot + 270), logo=slot + 210)
+
+
+def th_shroud(printable=True):
+    """Chamfered hex shroud under the effector: hides heatsink + heater block, front 3010 fan,
+    two 4010 blower faces, logo pocket. Hotend slides in sideways with the effector slot."""
+    th, e = P["toolhead_dv"], P["effector"]
+    f = _th_frame()
+    H, Rh = th["height"], th["hex_r"]
+    ap = Rh * math.cos(math.radians(30))
+    s = hexagon(0, 0, Rh, -H, H, rot=f["fan"] + 30)
+    cb = th["chamfer"]
+    s = s.common(Part.makeCone(ap - cb, ap - cb + 80, 80, V(0, 0, -H)))       # DV bottom chamfer
+    tools = [cyl(e["heatsink_d"] / 2 + 0.4, H + 2, 0, 0, -H - 1),
+             cyl(15, H - e["heatsink_h"] + 0.01, 0, 0, -H - 1)]               # heater-block cavity
+    for w, z0, z1 in ((e["heatsink_d"] + 0.6, -e["heatsink_h"] - 1, 1), (24, -H - 1, -e["heatsink_h"])):
+        sl = box(0, -w / 2, z0, Rh + 5, w, z1 - z0)                            # side-load slot
+        sl.rotate(V(0, 0, 0), V(0, 0, 1), f["slot"])
+        tools.append(sl)
+
+    def on_face(ang, x, z, d, depth, r0=None):
+        r0 = ap + 1 if r0 is None else r0
+        a = math.radians(ang)
+        rr, tt = V(math.cos(a), math.sin(a), 0), V(-math.sin(a), math.cos(a), 0)
+        p = rr * r0 + tt * x + V(0, 0, z)
+        return Part.makeCylinder(d / 2, depth, p, rr * -1)
+
+    zc = -th["fan_z"]
+    tools.append(on_face(f["fan"], 0, zc, 27, 20))                             # 3010 inlet
+    for x in (-12, 12):
+        for dz in (-12, 12):
+            tools.append(on_face(f["fan"], x, zc + dz, M3_TAP, 8))
+    for b in f["blowers"]:
+        for x, dz in ((-16, 16), (16, -16)):
+            tools.append(on_face(b, x, -th["blower_z"] + dz, M3_TAP, 8))
+        tools.append(on_face(b, 0, -th["blower_z"], 22, 5))                    # weight/air relief
+    hx = hexagon(0, 0, P["skirt"]["badge_r"] + 0.2, -1.5, 1.5 + 0.01, rot=0)  # logo pocket
+    hx.rotate(V(0, 0, 0), V(0, 1, 0), 90)
+    a = math.radians(f["logo"])
+    hx.rotate(V(0, 0, 0), V(0, 0, 1), f["logo"])
+    hx.translate(V(ap * math.cos(a), ap * math.sin(a), -H / 2 + 2))
+    tools.append(hx)
+    for k in (-1, 1):  # screws up into the effector clamp holes
+        a = math.radians(f["slot"] + 90 * k)
+        tools.append(cyl(M3_TAP / 2, 14, e["clamp_r"] * math.cos(a), e["clamp_r"] * math.sin(a), -13.9))
+    s = cut_all(s, tools).removeSplitter()
+    if printable:
+        s.rotate(V(0, 0, 0), V(1, 0, 0), 180)   # effector face on the bed
+    return s
+
+
+def th_duct(printable=True, mirror=False):
+    """4010 blower outlet (facing down) -> flat jet at the nozzle. Push-fit on the blower."""
+    th = P["toolhead_dv"]
+    w = 1.4
+    iw, ih = th["blower_out_w"] + 0.4, th["blower_out_h"] + 0.4
+
+    def rxy(z, ww, hh):
+        vs = [V(x, y, z) for x, y in ((-ww / 2, -hh / 2), (ww / 2, -hh / 2), (ww / 2, hh / 2), (-ww / 2, hh / 2))]
+        return Part.makePolygon(vs + [vs[0]])
+
+    def rtilt(y, z, ww, hh):
+        c, s_ = math.cos(math.radians(45)), math.sin(math.radians(45))
+        vs = [V(x, y + q * s_, z + q * c) for x, q in ((-ww / 2, -hh / 2), (ww / 2, -hh / 2),
+                                                       (ww / 2, hh / 2), (-ww / 2, hh / 2))]
+        return Part.makePolygon(vs + [vs[0]])
+    L, dr, st = th["duct_len"], th["duct_drop"], th["duct_straight"]
+    outer = Part.makeLoft([rxy(0, iw + 2 * w, ih + 2 * w), rxy(-st, iw + 2 * w, ih + 2 * w),
+                           rtilt(L, -dr, th["jet_w"] + 2 * w, th["jet_h"] + 2 * w)], True, False)
+    inner = Part.makeLoft([rxy(1, iw, ih), rxy(-st, iw, ih),
+                           rtilt(L + 0.6, -dr - 0.3, th["jet_w"], th["jet_h"])], True, False)
+    d = outer.cut(inner)
+    if mirror:
+        d = d.mirror(V(0, 0, 0), V(1, 0, 0))
+    if printable:
+        bb = d.BoundBox
+        d.translate(V(0, 0, -bb.ZMin))
+    return d

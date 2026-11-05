@@ -437,8 +437,9 @@ PARTS = [
     ("Wiring", "cable_clip_2020", 8, cable_clip),
     ("Toolhead", "effector_v6", 1, effector),
     ("Toolhead", "groove_clamp", 1, groove_clamp),
-    ("Toolhead", "hotend_shroud_3010", 1, hotend_shroud),
-    ("Toolhead", "part_fan_duct_5015", 1, part_fan_duct),
+    ("Toolhead", "dv_shroud", 1, th_shroud),
+    ("Toolhead", "dv_duct_4010", 2, th_duct),
+    ("Toolhead", "logo_badge_toolhead", 1, logo_badge),
     ("Extruder", "bowden_extruder_mount", 1, bowden_mount),
     ("Extruder", "spool_holder", 1, spool_holder),
 ]

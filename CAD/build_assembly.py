@@ -212,21 +212,30 @@ Z_NOZ = Z_EFF - e_["heatsink_h"] - 22
 add("Stock_Toolhead", "hotend_heatsink", cyl(e_["heatsink_d"] / 2, e_["heatsink_h"], 0, 0, Z_EFF - e_["heatsink_h"]))
 add("Stock_Toolhead", "heater_block", box(-8, -10, Z_NOZ + 5, 16, 20, 11))
 add("Stock_Toolhead", "nozzle", Part.makeCone(0.6, 4, 5, V(0, 0, Z_NOZ), Z))
-slot_ang = D.tool_frame()[1]
-fd = unit(slot_ang + 90)
+tf = D._th_frame()
+th = P["toolhead_dv"]
+ap = th["hex_r"] * math.cos(math.radians(30))
+fd = unit(tf["fan"])
 add("Stock_Toolhead", "fan_3010",
-    place(box(-15, -15, 0, 30, 30, 10), fd * 16 + Z * (Z_EFF - e_["heatsink_h"] / 2), unit(slot_ang + 180), Z, fd))
-dd = unit(slot_ang + 270)
-add("Stock_Toolhead", "fan_5015", place(box(-7.5, -25, 0, 15, 50, 50), dd * 42 + Z * (Z_NOZ + 27), dd.cross(Z), dd, Z))
+    place(box(-15, -15, 0, 30, 30, 10), fd * ap + Z * (Z_EFF - th["fan_z"]), fd.cross(Z) * -1, Z, fd))
+for k, b in enumerate(tf["blowers"]):
+    rb, tb = unit(b), unit(b + 90)
+    zb = Z_EFF - th["blower_z"]
+    add("Stock_Toolhead", f"blower_4010_{k}",
+        place(box(-20, -20, 0, 40, 40, 10), rb * ap + Z * zb, tb, Z, rb))
+    out = rb * (ap + 5) + tb * (th["blower_out_offset"] * (1 if k else -1)) + Z * (zb - 20)
+    dvec = V(-out.x, -out.y, 0)
+    dvec.normalize()
+    add("Printed_Toolhead", f"dv_duct_{k}", place(D.th_duct(printable=False), out, dvec.cross(Z), dvec, Z))
 add("Printed_Toolhead", "effector_v6", D.effector().translated(V(0, 0, Z_EFF)))
 clamp = D.groove_clamp()
-clamp.rotate(V(0, 0, 0), unit(slot_ang), 180)
+clamp.rotate(V(0, 0, 0), unit(tf["slot"]), 180)
 add("Printed_Toolhead", "groove_clamp",
     clamp.translated(V(0, 0, Z_EFF + e_["collar_h"] + 2.5 + e_["plate_t"] - 0.3)))
-add("Printed_Toolhead", "hotend_shroud_3010",
-    D.hotend_shroud(printable=False).translated(V(0, 0, Z_EFF - e_["heatsink_h"])))
-add("Printed_Toolhead", "part_fan_duct_5015",
-    place(D.part_fan_duct(printable=False), dd * 42 + Z * (Z_NOZ + 19), V(-dd.y, dd.x, 0), dd * -1, Z))
+add("Printed_Toolhead", "dv_shroud", D.th_shroud(printable=False).translated(V(0, 0, Z_EFF)))
+rl, tl_ = unit(tf["logo"]), unit(tf["logo"] + 90)
+add("Printed_Toolhead", "logo_badge_toolhead",
+    place(D.logo_badge(), rl * (ap - s_["badge_depth"]) + Z * (Z_EFF - th["height"] / 2 + 2), tl_, Z, rl))
 
 # ================================================================ export
 doc = App.newDocument("DVF_ACLP_Assembly")

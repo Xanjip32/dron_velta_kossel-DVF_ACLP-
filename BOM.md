@@ -9,7 +9,7 @@
 | M3 × 8–12 | ~12 | Arm joints (check your stock arms), fans, duct, extruder plate |
 | M2.5 heat-set insert (OD 3.5–3.6, L 4) | 8 | Pico / Pi standoffs |
 | M2.5 × 6 | 8 | Pico / Pi |
-| 5015 blower fan, 12 V | 1 | Part cooling |
+| 4010 blower fan, 12 V | 2 | Part cooling (DV toolhead), both on FAN1 |
 | 3010 fan, 12 V | 1 | Hotend heatsink (or reuse stock) |
 | 4010 fan, 12 V | 1 | Electronics |
 | Ø32 × 1 mm rubber/TPU pads | 3 | Feet |

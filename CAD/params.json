@@ -86,5 +86,20 @@
   },
   "panel": {
     "thickness": 3
+  },
+  "toolhead_dv": {
+    "height": 40,
+    "hex_r": 30,
+    "chamfer": 6,
+    "fan_z": 20,
+    "blower_z": 20.5,
+    "blower_out_w": 17,
+    "blower_out_h": 10,
+    "blower_out_offset": 11,
+    "duct_len": 24,
+    "duct_drop": 6,
+    "duct_straight": 3,
+    "jet_w": 12,
+    "jet_h": 3
   }
 }
