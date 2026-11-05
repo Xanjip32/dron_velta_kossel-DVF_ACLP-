@@ -2,10 +2,13 @@
   "_note": "All sizes in mm. Measure your printer and change these, then re-run build_dvf.py.",
   "frame": {
     "extrusion": 20,
-    "bottom_rail_pitch": 45
+    "bottom_rail_pitch": 45,
+    "rail_len": 300,
+    "rail_end_from_vertex": 75,
+    "tower_len": 720
   },
   "skirt": {
-    "span": 240,
+    "span": 238,
     "joint_gap": 1,
     "thickness": 3.2,
     "bottom_overlap_below": 1,
@@ -20,11 +23,6 @@
     "badge_depth": 1.4,
     "port_w": 34,
     "port_h": 20
-  },
-  "foot": {
-    "corner_clear": 55,
-    "arm_len": 40,
-    "thickness": 12
   },
   "endstop": {
     "hole_pitch": 19,
@@ -57,5 +55,36 @@
     "plate_w": 200,
     "plate_h": 80,
     "standoff_h": 6
+  },
+  "corner": {
+    "arm_reach": 105,
+    "wall": 5,
+    "truncate": 30,
+    "tower_from_vertex": 70,
+    "base_drop": 11,
+    "tower_socket": 40,
+    "top_h": 60
+  },
+  "power": {
+    "psu_l": 215,
+    "psu_w": 115,
+    "psu_h": 50,
+    "iec_w": 47.5,
+    "iec_h": 27.5,
+    "box_w": 64,
+    "box_h": 44,
+    "box_d": 38
+  },
+  "top_bay": {
+    "cover_h": 42
+  },
+  "channel": {
+    "seg_len": 150,
+    "top_len": 140,
+    "inner_w": 14,
+    "depth": 12
+  },
+  "panel": {
+    "thickness": 3
   }
 }

@@ -124,7 +124,9 @@ def bottom_skirt(variant="plain"):
         pw, ph = s["port_w"], min(s["port_h"], gap1 - gap0 - 2)
         px, py = W / 2 - pw / 2, (gap0 + gap1) / 2 - ph / 2
         holes.append(box(px, py, -1, pw, ph, t + 2))
-        keep.append((W / 2, (gap0 + gap1) / 2, pw / 2 + 4))
+        for k in (-1, 1):  # M3 holes for the power-inlet box
+            holes.append(cyl(M3 / 2, t + 2, W / 2 + k * (pw / 2 + 7), (gap0 + gap1) / 2, -1))
+        keep.append((W / 2, (gap0 + gap1) / 2, pw / 2 + 12))
     if gap1 - gap0 > 8:
         holes += honeycomb(vx0, gap0 + 1.5, vx1, gap1 - 1.5, s["hex_r"], s["hex_wall"],
                            -1, t + 2, keep)
@@ -408,24 +410,35 @@ def spool_holder(printable=True):
     return s
 
 
+# ---------------------------------------------------------------- v2 parts
+exec((Path(__file__).resolve().parent / "v2_parts.py").read_text())
+
 # ---------------------------------------------------------------- build
 PARTS = [
     # group, name, qty, builder
     ("00_Fit_Test", "fit_test_coupon", 1, fit_test),
+    ("Corners", "corner_bottom_motor", 3, corner_bottom),
+    ("Corners", "corner_top_idler", 3, corner_top),
     ("Skirts", "bottom_skirt_half", 3, lambda: bottom_skirt("plain")),
     ("Skirts", "bottom_skirt_badge_half", 2, lambda: bottom_skirt("badge")),
-    ("Skirts", "bottom_skirt_ports_half", 1, lambda: bottom_skirt("ports")),
+    ("Skirts", "bottom_skirt_power_half_RIGHT", 1, lambda: bottom_skirt("ports")),
     ("Skirts", "top_skirt_half", 6, top_skirt),
     ("Skirts", "logo_badge", 2, logo_badge),
-    ("Frame", "foot", 3, foot),
-    ("Frame", "endstop_mount", 3, endstop_mount),
-    ("Frame", "cable_clip_2020", 12, cable_clip),
+    ("Base_Power", "power_inlet_box", 1, power_inlet_box),
+    ("Base_Power", "psu_bracket", 1, psu_bracket),
+    ("Base_Power", "psu_terminal_cover", 1, psu_terminal_cover),
+    ("Top_Electronics", "skr_pico_pi3b_tray", 1, pico_pi_plate),
+    ("Top_Electronics", "top_cover_half_fan_pico", 1, lambda: top_cover_half(True)),
+    ("Top_Electronics", "top_cover_half_vented_pi", 1, lambda: top_cover_half(False)),
+    ("Wiring", "tower_channel", 4, wiring_channel),
+    ("Wiring", "tower_channel_lid", 4, wiring_channel_lid),
+    ("Wiring", "top_channel", 1, lambda: wiring_channel(P["channel"]["top_len"])),
+    ("Wiring", "top_channel_lid", 1, lambda: wiring_channel_lid(P["channel"]["top_len"])),
+    ("Wiring", "cable_clip_2020", 8, cable_clip),
     ("Toolhead", "effector_v6", 1, effector),
     ("Toolhead", "groove_clamp", 1, groove_clamp),
     ("Toolhead", "hotend_shroud_3010", 1, hotend_shroud),
     ("Toolhead", "part_fan_duct_5015", 1, part_fan_duct),
-    ("Electronics", "skr_pico_pi3b_plate", 1, pico_pi_plate),
-    ("Electronics", "fan_bracket_4010", 1, fan_bracket_40),
     ("Extruder", "bowden_extruder_mount", 1, bowden_mount),
     ("Extruder", "spool_holder", 1, spool_holder),
 ]
@@ -453,7 +466,18 @@ def main():
         report.append((group, name, qty, solids, round(shape.Volume / 1000, 1),
                        f"{bb.XLength:.0f}x{bb.YLength:.0f}x{bb.ZLength:.0f}",
                        mesh.isSolid() and not mesh.hasNonManifolds()))
+    (ROOT / "DXFs").mkdir(exist_ok=True)
+    for kind in ("bottom", "top"):
+        face = _panel_face(kind)
+        write_dxf(face, ROOT / "DXFs" / f"{kind}_panel_x1.dxf")
+        sh = panel(kind)
+        sh.exportStep(str(ROOT / "CAD" / "STEP" / f"{kind}_panel.step"))
+        doc.addObject("Part::Feature", f"{kind}_panel").Shape = sh
+        bb = face.BoundBox
+        print(f"DXF {kind}_panel {bb.XLength:.0f} x {bb.YLength:.0f} mm")
     doc.saveAs(str(ROOT / "CAD" / "DVF_ACLP.FCStd"))
+    g = frame_geo()
+    print("frame:", {k: round(v, 1) for k, v in g.items()}, "skirt span", P["skirt"]["span"])
     for r in report:
         print("%-12s %-26s x%-2d solids=%d vol=%scm3 bbox=%s watertight=%s" % r)
 

@@ -20,6 +20,14 @@ Power off and unplug before rewiring. The SKR Pico takes 12–24 V, so the stock
 
 If a tower moves the wrong way, flip `dir_pin` (`!`) for that stepper. If the towers are swapped, swap the motor plugs, not the config.
 
+## Mains (bottom power base) ⚠️
+
+Wire the mains side only if you know how, and only with the printer unplugged.
+
+* IEC inlet **L (via fuse + switch)** → PSU **L**; **N** → PSU **N**; **Earth** → PSU **⏚** and to the frame (a ring terminal on a corner M4 screw).
+* Fit the printed `psu_terminal_cover` before powering up. Test the switch and fuse with a multimeter first.
+* PSU **+V / −V (12 V)** → up tower A's wiring channel → top bay → SKR Pico power input. Use ≥ 1.5 mm² wire, because it also carries the bed current. Check the Pico's input fuse rating against your bed current.
+
 ## Raspberry Pi 3B
 
 * **Data:** USB-A (Pi) → USB-C (Pico). Easiest option. Alternative: the Pico's Pi header with UART (`[mcu] serial: /dev/ttyAMA0`). That needs `enable_uart=1` and `dtoverlay=disable-bt` on the Pi.
