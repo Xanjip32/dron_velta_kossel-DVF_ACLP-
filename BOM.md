@@ -11,14 +11,16 @@
 | M2.5 × 6 | 8 | Pico / Pi |
 | 4010 blower fan, 12 V | 2 | Part cooling (DV toolhead), both on FAN1 |
 | 3010 fan, 12 V | 1 | Hotend heatsink (or reuse stock) |
-| 4010 fan, 12 V | 1 | Electronics |
+| 6015 or 6010 fan (60 mm), 12 V | 2 | Top intake (FAN3) and bottom intake (12 V direct) |
 | Ø32 × 1 mm rubber/TPU pads | 3 | Feet |
 | USB-A to USB-C cable (short) or 4 Dupont wires | 1 | Pi ↔ Pico |
 | 5 V 3 A buck converter (optional) | 1 | Pi power if not taken from the Pico header |
 | 12 V box PSU, 215 × 115 × 50 (e.g. 12 V 30 A "S-360-12" type) | 1 | Power base (or reuse a stock 12 V supply) |
 | IEC C14 inlet with fuse holder + rocker switch (snap-in, 47.5 × 27.5 cut-out) | 1 | Power inlet box |
 | 1.0 mm² (18 AWG) mains wire, insulated spade/ring crimps, heat-shrink | 1 set | Inlet → PSU. **Earth goes to the PSU and the frame.** |
-| 3 mm ACM (aluminium composite) or 4 mm plywood, ~450 × 400 mm | 2 | Bottom and top panels (DXFs) |
+| 3 mm black ACM (aluminium composite) or 4 mm plywood, ~430 × 370 mm | 4 | Bottom, bed deck, top deck, lid (DXFs) |
+| M4 heat-set inserts (OD 5.6) | 4 | Side spool/extruder bracket |
+| M3 × 50 | 9 | Corner caps → corners |
 | M4 × 50 socket head | 12 | Corner → tower side slots |
 | M4 × 10 + T-nuts | ~70 | Corner → rail slots, panels, channels, skirts |
 | M3 heat-set inserts (OD 4.2) | 9 | Top corners (top panel) |

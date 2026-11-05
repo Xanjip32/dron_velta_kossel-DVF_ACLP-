@@ -4,28 +4,33 @@ A Doron Velta style rebuild of the **Anycubic Kossel Linear Plus**. It uses new 
 
 ![assembly](images/assembly_full.png)
 
-| Power base | Top electronics bay | Toolhead |
+| Bottom section | Top section (lid on) | Toolhead |
 |---|---|---|
 | ![](images/assembly_base.png) | ![](images/assembly_top.png) | ![](images/assembly_toolhead.png) |
 
-> ⚠️ **v0.2, not yet built or fit-tested.** All parts are generated from [`CAD/params.json`](CAD/params.json), and several values are estimates (see below). Print `00_Fit_Test` and **one bottom corner** first.
+> ⚠️ **v0.3, not yet built or fit-tested.** All parts are generated from [`CAD/params.json`](CAD/params.json), and several values are estimates (see below). Print `00_Fit_Test` and **one bottom corner** first.
 
-## What's new in v0.2
+Colours: **red = printed parts, black = stock/bought parts** (frame, rails, motors, arms, bed, PSU, boards, fans, panels).
 
-* **New corners (replace the stock Anycubic corners).**
-  * **Bottom motor corner:** pockets for the two lower 2020 rails and the tower. It has a NEMA17 bay with the shaft pointing to the centre, a belt and pulley opening, a cable duct behind the tower, and rubber-foot recesses.
-  * **Top idler corner:** top rail and tower pockets, an M3 idler axle slot with an adjuster screw, holes for the stock endstop board, M3 inserts for the top panel, and a cable duct.
-  * Each pocket is held with M4 screws into the extrusion slots.
-* **Bottom power base.**
-  * A cut floor panel (`DXFs/bottom_panel_x1.dxf`) holds a standard **12 V 215 × 115 × 50 mm box PSU** with a printed bracket and a **mains terminal cover**.
-  * On the **right half of one side**, a printed **power inlet box** holds an **IEC C14 inlet with fuse and rocker switch**. You plug in and switch on directly there.
-* **Top electronics bay.**
-  * A cut top panel (`DXFs/top_panel_x1.dxf`) carries the **SKR Pico + Pi 3B tray**.
-  * Two printed covers go over it: one with a 40 mm fan over the Pico, one vented over the Pi.
-* **Wiring channels.**
-  * Printed U-channels with press-fit lids run up the outside of tower A.
-  * The cables then go through the duct in the top corner and along a top channel into the cover's cable notch.
-  * The 12 V cable from the PSU goes up this path. Mains stays in the base.
+## What's new in v0.3: enclosed Doron Velta sections
+
+* **Deep boxed skirts**, 20 mm deep with a chamfered front and a full hex grill, the same style as the original. They bolt to the rails from the front.
+  * **Bottom section:** 6 halves from floor to bed height. One holds a **60 mm intake fan**, and one is the **power half (right side)** with the IEC inlet + switch box.
+  * **Top section:** 6 halves from the top rail up to the lid. One holds a **60 mm intake fan** blowing across the SKR Pico and Pi.
+* **Closed top and bottom:**
+  * Bottom: `bed_deck` panel under the bed (the inner cover), with 3 bed standoffs and a hole for the bed wires.
+  * Top: the top deck panel holds the electronics, `corner_top_cap` ×3 fill the corners, and a **`lid`** panel with a hex vent field covers everything.
+* **Pillar covers:** 12 clip-on segments, 4 per tower, cover the outer face of each tower. They are hollow, so the 12 V and toolhead cables run inside the tower A pillar.
+* **Side spool + extruder bracket:** bolts to the flat outer face of the tower B top corner and carries the stock NEMA17 Bowden extruder and the spool arm.
+
+### Airflow
+
+| Section | In | Out |
+|---|---|---|
+| Bottom (PSU) | 60 mm fan in the rear-face skirt (always on with power) | Hex grills on the other 5 halves + floor vents. The PSU's own fan circulates the air. |
+| Top (Pico + Pi) | 60 mm fan in the right top skirt (Klipper `controller_fan`, FAN3) | Hex grills on the other 5 halves + the lid's hex vent over the boards |
+
+The bed deck separates the warm PSU compartment from the print area.
 
 ## Measure these before printing
 
@@ -45,27 +50,21 @@ With these defaults, Klipper starts at `delta_radius ≈ 122.8` with `arm_length
 
 | Folder | Part | Qty | Notes |
 |---|---|---:|---|
-| 00_Fit_Test | fit_test_coupon | 1 | Check the skirt fit on the rails |
-| Corners | corner_bottom_motor | 3 | 4–5 walls, 25 % gyroid. Print standing on its base. |
-| Corners | corner_top_idler | 3 | Same settings |
-| Skirts | bottom_skirt_half / badge_half | 3 / 2 | |
-| Skirts | bottom_skirt_power_half_RIGHT | 1 | Right half of the power side, with the port and 2 M3 holes |
-| Skirts | top_skirt_half | 6 | |
-| Skirts | logo_badge | 2 | Accent colour, glue in |
-| Base_Power | power_inlet_box | 1 | Bolts on the outside of the power skirt. Holds the IEC inlet + switch. |
-| Base_Power | psu_bracket | 1 | Holds the PSU end opposite the terminals |
-| Base_Power | psu_terminal_cover | 1 | Covers the mains terminals. Don't skip it. |
-| Top_Electronics | skr_pico_pi3b_tray | 1 | M2.5 heat-set inserts |
-| Top_Electronics | top_cover_half_fan_pico / vented_pi | 1 / 1 | Print roof-down |
-| Wiring | tower_channel + lid | 4 + 4 | Tower A, M4 + T-nuts |
-| Wiring | top_channel + lid | 1 + 1 | On the top panel |
-| Wiring | cable_clip_2020 | 8 | |
-| Toolhead | effector_v6, groove_clamp, dv_shroud, logo_badge_toolhead | 1 each | ABS/ASA. See the toolhead section. |
-| Toolhead | dv_duct_4010 | 2 | ABS/ASA, push-fit on the blowers |
-| Extruder | bowden_extruder_mount, spool_holder | 1 each | On the top panel |
-| **DXFs** | bottom_panel, top_panel | 1 each | 3 mm ACM or 4 mm plywood, CNC/laser/jigsaw (about 430 × 370 mm) |
+| 00_Fit_Test | deep_skirt_fit_test | 1 | Slice of a bottom skirt. Check it on both lower rails. |
+| Corners | corner_bottom_motor / corner_top_idler | 3 / 3 | 4–5 walls, 25 % gyroid |
+| Corners | corner_top_cap | 3 | Between the top deck and the lid. M3 into the corner inserts. |
+| Corners | pillar_cover | 12 | 4 per tower, M4 + T-nut into the tower's outer slot |
+| Skirts_Bottom | bottom_skirt_grill / badge / fan60_intake / power_RIGHT | 2 / 2 / 1 / 1 | Front face down. M4 × 10 through the front holes. |
+| Skirts_Top | top_skirt_grill / fan60_intake | 5 / 1 | |
+| Skirts_Top | logo_badge | 3 | 2 skirts + toolhead |
+| Base_Power | power_inlet_box, psu_bracket, psu_terminal_cover, bed_standoff | 1, 1, 1, 3 | |
+| Top_Electronics | skr_pico_pi3b_tray, top_channel + lid | 1, 1 + 1 | |
+| Toolhead | effector_v6, groove_clamp, dv_shroud, dv_duct_4010 | 1, 1, 1, 2 | ABS/ASA |
+| Extruder | side_spool_extruder_bracket | 1 | Tower B top corner, 4× M4 into heat-set inserts |
+| Misc | cable_clip_2020 | 8 | |
+| **DXFs** | bottom_panel, bed_deck_panel, top_panel, lid_panel | 1 each | 3 mm black ACM or plywood, about 430 × 370 mm |
 
-All printed parts fit inside the Kossel's Ø230 mm print area. Use PETG at minimum, and ABS/ASA for the toolhead and the power inlet box.
+All printed parts fit the Kossel's Ø230 mm print area. Use PETG at minimum, and ABS/ASA for the toolhead and the power box.
 
 ## Toolhead (DV style, stock arms)
 
@@ -85,6 +84,7 @@ CAD/build_dvf.py, CAD/v2_parts.py   parametric part generator (FreeCAD 1.x Pytho
 CAD/build_assembly.py               full printer assembly
 CAD/params.json                     all dimensions
 CAD/DVF_ACLP_Assembly.step / .FCStd full assembled printer (open in SolidWorks/Fusion/FreeCAD)
+CAD/DVF_ACLP_Assembly.obj / .mtl   same assembly in colour (red printed / black stock) for 3D Viewer or Blender
 CAD/DVF_ACLP.FCStd                  all parts in print orientation
 CAD/STEP/*.step                     each part (and both panels) as editable solids
 DXFs/*.dxf                          bottom and top panel cut files

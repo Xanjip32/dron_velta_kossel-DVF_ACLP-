@@ -35,7 +35,7 @@ TOWER_TOP = TZ0 + P["frame"]["tower_len"]
 Z_TC = TOWER_TOP - c_["tower_socket"]     # top corner bottom
 Z_TOP_RAIL = Z_TC + c_["top_h"] - 4 - ext / 2
 Z_TOP_PANEL = Z_TC + c_["top_h"]
-Z_BED = Z_HIGH + ext / 2 + 10
+Z_BED = Z_HIGH + ext / 2 + PANEL_T + P["enclosure"]["bed_gap"]
 ARM = 269.0
 TOWERS = {"A": 210, "B": 330, "C": 90}
 FACES = [270, 30, 150]
@@ -99,34 +99,56 @@ add("Panels", "top_panel", D.panel("top").translated(V(0, 0, Z_TOP_PANEL)))
 add("Stock_Bed", "heated_bed_230", cyl(115, 3, 0, 0, Z_BED))
 add("Stock_Bed", "glass_220", cyl(110, 3, 0, 0, Z_BED + 3))
 
-# ================================================================ skirts
-t = s_["thickness"]
+# ================================================================ enclosed DV sections
+G = D._sec()
+en = P["enclosure"]
+DEP = en["skirt_depth"]
 W = s_["span"] / 2 - s_["joint_gap"] / 2
-bottom_set = [("plain", "badge"), ("plain", "badge"), ("ports", "plain")]  # ports = viewer's right
-sk = {v: D.bottom_skirt(v) for v in ("plain", "badge", "ports")}
-top = D.top_skirt()
 badge = D.logo_badge()
-y_low = s_["bottom_overlap_below"] + ext / 2
-gap_c = y_low + P["frame"]["bottom_rail_pitch"] / 2
-z0_bottom = Z_LOW - y_low
-z0_top = Z_TOP_RAIL - (s_["top_overlap_below"] + ext / 2)
+bottom_set = [("plain", "badge"), ("fan", "badge"), ("power", "plain")]   # index 0 = viewer's right
+top_set = [("plain", "plain"), ("plain", "plain"), ("fan", "plain")]
+cache = {}
 for i, f in enumerate(FACES):
     n = unit(f)
     ex = unit(f - 90)
-    front = n * (D_EDGE + ext / 2 + t)
-    for j, (variant, xoff) in enumerate(zip(bottom_set[i], (-s_["span"] / 2, s_["joint_gap"] / 2))):
-        o = front + ex * xoff + Z * z0_bottom
-        add("Printed_Skirts", f"bottom_skirt_{variant}_{i}{j}", place(sk[variant], o, ex, Z, n * -1))
-        if variant == "badge":
-            c = o + ex * (W - 4 - s_["badge_r"]) + Z * gap_c - n * s_["badge_depth"]
-            add("Printed_Skirts", f"logo_badge_{i}", place(badge, c, ex * -1, Z, n))
-        if variant == "ports":
-            pc = o + ex * (W / 2) + Z * gap_c
-            add("Printed_Power", "power_inlet_box", place(D.power_inlet_box(), pc, ex * -1, Z, n))
-            add("Stock_Power", "iec_c14_switch_inlet",
-                place(box(-pw["iec_w"] / 2, -pw["iec_h"] / 2, pw["box_d"] - 30, pw["iec_w"],
-                          pw["iec_h"], 33), pc, ex * -1, Z, n))
-        add("Printed_Skirts", f"top_skirt_{i}{j}", place(top, front + ex * xoff + Z * z0_top, ex, Z, n * -1))
+    front = n * (D_EDGE + ext / 2 + DEP)
+    for sec, sets, z0 in (("bottom", bottom_set, G["bottom_z0"]), ("top", top_set, G["top_z0"])):
+        for j, (variant, xoff) in enumerate(zip(sets[i], (-s_["span"] / 2, s_["joint_gap"] / 2))):
+            key = (sec, variant)
+            if key not in cache:
+                cache[key] = D.deep_skirt(sec, variant)
+            sk = cache[key]
+            o = front + ex * xoff + Z * z0
+            add("Printed_Skirts", f"{sec}_skirt_{variant}_{i}{j}", place(sk, o, ex, Z, n * -1))
+            Hs = G["bottom_z1"] - G["bottom_z0"] if sec == "bottom" else G["lid_z"] - G["top_z0"]
+            cy = Hs / 2 + (4 if sec == "top" else 0)
+            if variant == "fan":
+                add("Stock_Fans", f"fan60_{sec}", place(box(W / 2 - 30, cy - 30, 2.4, 60, 60, 15), o, ex, Z, n * -1))
+            if variant == "badge":
+                c = o + ex * (W - 6 - s_["badge_r"]) + Z * cy - n * s_["badge_depth"]
+                add("Printed_Skirts", f"logo_badge_{i}", place(badge, c, ex * -1, Z, n))
+            if variant == "power":
+                pc = o + ex * (W / 2) + Z * ((G["zlow"] + G["zhigh"]) / 2 - z0)
+                add("Printed_Power", "power_inlet_box", place(D.power_inlet_box(), pc, ex * -1, Z, n))
+                add("Stock_Power", "iec_c14_switch_inlet",
+                    place(box(-pw["iec_w"] / 2, -pw["iec_h"] / 2, pw["box_d"] - 30, pw["iec_w"],
+                              pw["iec_h"], 33), pc, ex * -1, Z, n))
+
+# decks, lid, corner caps, pillars
+add("Panels", "bed_deck", D.deck_face().extrude(V(0, 0, PANEL_T)).translated(V(0, 0, G["bed_deck"])))
+add("Panels", "lid", D.lid_face().extrude(V(0, 0, PANEL_T)).translated(V(0, 0, G["lid_z"])))
+bs = D.bed_standoff()
+for a in (90, 210, 330):
+    p_ = unit(a) * en["bed_mount_r"] + Z * (G["bed_deck"] + PANEL_T)
+    add("Printed_Power", f"bed_standoff_{a}", bs.translated(p_))
+cap, pil = D.corner_cap(), D.pillar_cover()
+for tn_, a in TOWERS.items():
+    o, ex, ey, ez = corner_frame(a)
+    add("Printed_Corners", f"corner_cap_{tn_}", place(cap, o + Z * (Z_TOP_PANEL + PANEL_T), ex, ey, ez))
+    for k in range(int((Z_TC - TZ0 - c_["tower_socket"]) // en["pillar_seg"])):
+        z = TZ0 + c_["tower_socket"] + k * en["pillar_seg"]
+        add("Printed_Corners", f"pillar_{tn_}{k}",
+            place(pil, o + ex * (c_["tower_from_vertex"] - 10) + Z * z, ex, ey, ez))
 
 # ================================================================ power base (face 150)
 n = unit(150)
@@ -138,12 +160,12 @@ add("Stock_Power", "psu_12v_360w",
 add("Printed_Power", "psu_bracket",
     place(D.psu_bracket(), cen - u * (pw["psu_l"] / 2 + 4) + Z * BD, n, u, Z))
 cover = D.psu_terminal_cover()
-cover.rotate(V(0, 0, 0), V(1, 0, 0), 180)                     # roof up
+cover.rotate(V(0, 0, 0), V(1, 0, 0), 180)
 cover.translate(V(0, 0, pw["psu_h"] + 6))
 add("Printed_Power", "psu_terminal_cover",
     place(cover, cen + u * (pw["psu_l"] / 2 + 14) + Z * BD, n, u, Z))
 
-# ================================================================ top electronics bay
+# ================================================================ top electronics bay (under the lid)
 zt = Z_TOP_PANEL + PANEL_T
 add("Printed_Top_Bay", "skr_pico_pi3b_tray",
     D.pico_pi_plate().translated(V(-el["plate_w"] / 2, -el["plate_h"] / 2, zt)))
@@ -151,42 +173,25 @@ for k, (nm, xc) in enumerate((("SKR_Pico", -el["plate_w"] / 4), ("Raspberry_Pi_3
     zb = zt + 4 + el["standoff_h"]
     add("Stock_Electronics", nm, box(xc - 42.5, -28, zb, 85, 56, 1.6))
     add("Stock_Electronics", nm + "_components", box(xc - 30, -20, zb + 1.6, 50, 40, 16 if k else 6))
-H = P["top_bay"]["cover_h"]
-L = el["plate_w"] / 2 + 2
-for nm, fan in (("top_cover_half_fan_pico", True), ("top_cover_half_vented_pi", False)):
-    s = D.top_cover_half(fan)
-    s.rotate(V(0, 0, 0), V(1, 0, 0), 180)
-    if not fan:
-        s.rotate(V(0, 0, 0), Z, 180)
-    s.translate(V(-L if fan else L, 0, zt + H))
-    add("Printed_Top_Bay", nm, s)
-add("Stock_Electronics", "fan_4010", box(-L / 2 - 20, -20, zt + H, 40, 40, 10))
-
-# wiring: tower A outer face channels -> top corner duct -> top channel -> Pico cover notch
 aA = TOWERS["A"]
 r = unit(aA)
-rf = R_TOWER + ext / 2
-chan, lid = D.wiring_channel(), D.wiring_channel_lid()
-for k in range(4):
-    z = TZ0 + 50 + k * (ch["seg_len"] + 8)
-    add("Printed_Wiring", f"tower_channel_{k}", place(chan, r * rf + Z * z, unit(aA + 90), Z, r))
-    add("Printed_Wiring", f"tower_channel_lid_{k}",
-        place(lid, r * (rf + ch["depth"] + 2 + 1.6) + Z * z, unit(aA + 90) * -1, Z, r * -1))
 duct = r * (2 * D_EDGE - (c_["truncate"] + 21)) + Z * zt
-notch = V(-L, 0, zt)
-dvec = notch - duct
+dvec = V(-el["plate_w"] / 2, 0, zt) - duct
 dvec.normalize()
 tl = ch["top_len"]
-add("Printed_Wiring", "top_channel", place(D.wiring_channel(tl), duct, dvec.cross(Z), dvec, Z))
-add("Printed_Wiring", "top_channel_lid",
+add("Printed_Top_Bay", "top_channel", place(D.wiring_channel(tl), duct, dvec.cross(Z), dvec, Z))
+add("Printed_Top_Bay", "top_channel_lid",
     place(D.wiring_channel_lid(tl), duct + Z * (ch["depth"] + 2 + 1.6), dvec.cross(Z) * -1, dvec, Z * -1))
 
-# extruder + spool holder on the top panel
-o = unit(330) * 150 + Z * zt
-add("Printed_Extruder", "bowden_extruder_mount", place(D.bowden_mount(), o, unit(240), unit(330), Z))
-add("Stock_Extruder", "extruder_nema17", place(box(-21, 2, 5, 42, 42, 40), o, unit(240), unit(330), Z))
-o = unit(90) * 150 + Z * zt
-add("Printed_Extruder", "spool_holder", place(D.spool_holder(printable=False), o, unit(0), unit(90), Z))
+# ================================================================ side spool + extruder (tower B top corner)
+aB = TOWERS["B"]
+o, ex, ey, ez = corner_frame(aB)
+bo = o + ex * c_["truncate"] + Z * Z_TC
+bx_, by_ = ex * -1, ey * -1
+add("Printed_Extruder", "side_spool_extruder_bracket", place(D.side_spool_extruder(), bo, bx_, by_, Z))
+add("Stock_Extruder", "extruder_nema17", place(box(7, 24, 4, 42, 40, 42), bo, bx_, by_, Z))
+spool = cyl(100, 65, 42, -10, 46, (1, 0, 0)).cut(cyl(27, 70, 40, -10, 46, (1, 0, 0)))
+add("Stock_Extruder", "filament_spool_1kg", place(spool, bo, bx_, by_, Z))
 
 # ================================================================ motion + toolhead
 xt = c_["tower_from_vertex"]
@@ -251,6 +256,22 @@ doc.recompute()
 root = Path(__file__).resolve().parent
 doc.saveAs(str(root / "DVF_ACLP_Assembly.FCStd"))
 Import.export(roots, str(root / "DVF_ACLP_Assembly.step"))
+# colour OBJ (+MTL): printed parts red, stock parts black
+import MeshPart  # noqa: E402
+obj, vi = ["mtllib DVF_ACLP_Assembly.mtl"], 1
+for gname, items in groups.items():
+    mat = "printed_red" if gname.startswith("Printed") else "stock_black"
+    for nm, sh in items:
+        m = MeshPart.meshFromShape(Shape=sh, LinearDeflection=0.4, AngularDeflection=0.4)
+        obj.append(f"o {nm}")
+        obj.append(f"usemtl {mat}")
+        pts, fcs = m.Topology
+        obj += [f"v {p.x:.2f} {p.y:.2f} {p.z:.2f}" for p in pts]
+        obj += [f"f {a + vi} {b + vi} {c + vi}" for a, b, c in fcs]
+        vi += len(pts)
+(root / "DVF_ACLP_Assembly.obj").write_text(chr(10).join(obj) + chr(10))
+(root / "DVF_ACLP_Assembly.mtl").write_text(chr(10).join([
+    "newmtl printed_red", "Kd 0.80 0.08 0.06", "", "newmtl stock_black", "Kd 0.06 0.06 0.07", ""]))
 for gname, items in groups.items():
     print(f"{gname:20s} {len(items):3d}")
-print(f"height to top of covers {zt + H:.0f} mm, delta_radius ~{delta_r:.1f}, nozzle z {Z_NOZ:.0f}")
+print(f"lid height {G['lid_z'] + PANEL_T:.0f} mm, delta_radius ~{delta_r:.1f}, nozzle z {Z_NOZ:.0f}")

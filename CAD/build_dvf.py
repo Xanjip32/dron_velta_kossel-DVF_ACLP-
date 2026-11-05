@@ -412,36 +412,36 @@ def spool_holder(printable=True):
 
 # ---------------------------------------------------------------- v2 parts
 exec((Path(__file__).resolve().parent / "v2_parts.py").read_text())
+exec((Path(__file__).resolve().parent / "v3_parts.py").read_text())
 
 # ---------------------------------------------------------------- build
 PARTS = [
     # group, name, qty, builder
-    ("00_Fit_Test", "fit_test_coupon", 1, fit_test),
+    ("00_Fit_Test", "deep_skirt_fit_test", 1, deep_fit_test),
     ("Corners", "corner_bottom_motor", 3, corner_bottom),
     ("Corners", "corner_top_idler", 3, corner_top),
-    ("Skirts", "bottom_skirt_half", 3, lambda: bottom_skirt("plain")),
-    ("Skirts", "bottom_skirt_badge_half", 2, lambda: bottom_skirt("badge")),
-    ("Skirts", "bottom_skirt_power_half_RIGHT", 1, lambda: bottom_skirt("ports")),
-    ("Skirts", "top_skirt_half", 6, top_skirt),
-    ("Skirts", "logo_badge", 2, logo_badge),
+    ("Corners", "corner_top_cap", 3, corner_cap),
+    ("Corners", "pillar_cover", 12, pillar_cover),
+    ("Skirts_Bottom", "bottom_skirt_grill", 2, lambda: deep_skirt("bottom", "plain")),
+    ("Skirts_Bottom", "bottom_skirt_badge", 2, lambda: deep_skirt("bottom", "badge")),
+    ("Skirts_Bottom", "bottom_skirt_fan60_intake", 1, lambda: deep_skirt("bottom", "fan")),
+    ("Skirts_Bottom", "bottom_skirt_power_RIGHT", 1, lambda: deep_skirt("bottom", "power")),
+    ("Skirts_Top", "top_skirt_grill", 5, lambda: deep_skirt("top", "plain")),
+    ("Skirts_Top", "top_skirt_fan60_intake", 1, lambda: deep_skirt("top", "fan")),
+    ("Skirts_Top", "logo_badge", 3, logo_badge),
     ("Base_Power", "power_inlet_box", 1, power_inlet_box),
     ("Base_Power", "psu_bracket", 1, psu_bracket),
     ("Base_Power", "psu_terminal_cover", 1, psu_terminal_cover),
+    ("Base_Power", "bed_standoff", 3, bed_standoff),
     ("Top_Electronics", "skr_pico_pi3b_tray", 1, pico_pi_plate),
-    ("Top_Electronics", "top_cover_half_fan_pico", 1, lambda: top_cover_half(True)),
-    ("Top_Electronics", "top_cover_half_vented_pi", 1, lambda: top_cover_half(False)),
-    ("Wiring", "tower_channel", 4, wiring_channel),
-    ("Wiring", "tower_channel_lid", 4, wiring_channel_lid),
-    ("Wiring", "top_channel", 1, lambda: wiring_channel(P["channel"]["top_len"])),
-    ("Wiring", "top_channel_lid", 1, lambda: wiring_channel_lid(P["channel"]["top_len"])),
-    ("Wiring", "cable_clip_2020", 8, cable_clip),
+    ("Top_Electronics", "top_channel", 1, lambda: wiring_channel(P["channel"]["top_len"])),
+    ("Top_Electronics", "top_channel_lid", 1, lambda: wiring_channel_lid(P["channel"]["top_len"])),
     ("Toolhead", "effector_v6", 1, effector),
     ("Toolhead", "groove_clamp", 1, groove_clamp),
     ("Toolhead", "dv_shroud", 1, th_shroud),
     ("Toolhead", "dv_duct_4010", 2, th_duct),
-    ("Toolhead", "logo_badge_toolhead", 1, logo_badge),
-    ("Extruder", "bowden_extruder_mount", 1, bowden_mount),
-    ("Extruder", "spool_holder", 1, spool_holder),
+    ("Extruder", "side_spool_extruder_bracket", 1, side_spool_extruder),
+    ("Misc", "cable_clip_2020", 8, cable_clip),
 ]
 
 
@@ -468,10 +468,10 @@ def main():
                        f"{bb.XLength:.0f}x{bb.YLength:.0f}x{bb.ZLength:.0f}",
                        mesh.isSolid() and not mesh.hasNonManifolds()))
     (ROOT / "DXFs").mkdir(exist_ok=True)
-    for kind in ("bottom", "top"):
-        face = _panel_face(kind)
+    for kind, face in (("bottom", _panel_face("bottom")), ("top", _panel_face("top")),
+                       ("bed_deck", deck_face()), ("lid", lid_face())):
         write_dxf(face, ROOT / "DXFs" / f"{kind}_panel_x1.dxf")
-        sh = panel(kind)
+        sh = face.extrude(V(0, 0, P["panel"]["thickness"]))
         sh.exportStep(str(ROOT / "CAD" / "STEP" / f"{kind}_panel.step"))
         doc.addObject("Part::Feature", f"{kind}_panel").Shape = sh
         bb = face.BoundBox

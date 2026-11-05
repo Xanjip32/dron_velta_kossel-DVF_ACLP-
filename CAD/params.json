@@ -101,5 +101,16 @@
     "duct_straight": 3,
     "jet_w": 12,
     "jet_h": 3
+  },
+  "enclosure": {
+    "skirt_depth": 20,
+    "bottom_skirt_z0": 2,
+    "bottom_rise": 12,
+    "top_bay_h": 48,
+    "grill_hex_r": 5,
+    "grill_wall": 2,
+    "pillar_seg": 160,
+    "bed_gap": 8,
+    "bed_mount_r": 100
   }
 }

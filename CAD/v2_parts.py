@@ -112,6 +112,9 @@ def corner_top():
         tools.append(cyl(M3_TAP / 2, 10, xt + 20, y, -0.01))
     for x, y in ((c["truncate"] + 8, 18), (c["truncate"] + 8, -18), (xt + 25, 0)):
         tools.append(cyl(INSERT_M3 / 2, 6, x, y, H - 5.99))                 # top panel inserts
+    for y in (-14, 14):                                                     # side bracket inserts
+        for z in (14, 42):
+            tools.append(cyl(5.6 / 2, 9, c["truncate"] - 0.01, y, z, (1, 0, 0)))
     return cut_all(body, tools).removeSplitter()
 
 
