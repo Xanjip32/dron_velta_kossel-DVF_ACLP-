@@ -1,5 +1,9 @@
 # Doron Velta trim for the Anycubic Kossel Linear Plus
 
+[Download the v0.1 kit](Kossel-Velta-Trim-v0.1.zip) · [Download the M4 fit test](models/00_M4_Fit_Test.stl)
+
+![Rendered trim parts](preview.png)
+
 **v0.1 fit-test kit.** A removable honeycomb base and crown for the open-frame Linear Plus. The skirt uses the stock extrusion slots. The stock bed, rails, arms, belts, endstops, Bowden extruder, and toolhead stay in place. The exterior uses the same parts with either controller.
 
 ## Print list
