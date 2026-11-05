@@ -29,8 +29,6 @@
 | 🟥 **Red** | Accent parts. Their files start with **`[a]`**, as in Doron Velta. |
 | ⬜ **Silver** | Stock Kossel aluminium, bought parts |
 
-> 🚧 **Work in progress:** the swap to the original Doron Velta skirts, fan grill and fan mount, the new power box and the plain lid are still being finished. The STL and STEP files here are the v0.5 set until that update lands.
-
 > ⚠️ **Prototype.** The parts are modelled from published dimensions and the original DV files. They have not been built or fit-tested yet. Print the fit-test piece and one corner first.
 
 ## Renders
@@ -62,7 +60,7 @@
 
 ```
 STLs/                                print files (_xN = quantity, [a] = accent colour)
-STEP/DVF_ACLP_FULL_ASSEMBLY.step     complete printer, open in SolidCraft / SolidWorks / Fusion
+STEP/DVF_ACLP_FULL_ASSEMBLY_step.zip complete printer (115 MB STEP, zipped for GitHub): unzip, open in SolidCraft / SolidWorks / Fusion
 STEP/parts/                          every printed part as an editable solid
 STEP/panels_cut_3mm/                 bottom panel, bed deck, top deck, lid: cut from 3 mm black ACM
 images/                              renders
