@@ -1,49 +1,125 @@
-# DVF-ACLP: Doron Velta outer design for the Anycubic Kossel Linear Plus
+<h1 align="center">DVF-ACLP</h1>
+<p align="center"><b>Doron Velta styling for the Anycubic Kossel Linear Plus</b></p>
 
-This kit gives the Anycubic Kossel Linear Plus the outside look of [Doron Velta by rogerlz](https://github.com/rogerlz/Doron-Velta): boxed honeycomb skirts with the DV logo, a closed top and bottom section, tower pillars, a DV toolhead look and the original DV spool holder. It is resized to fit the stock Kossel 2020 frame, rails, arms, motors and bed. The controller is a BTT SKR Pico + Raspberry Pi 3B.
+<p align="center">
+  <img src="images/render_full.png" width="420" alt="DVF-ACLP full printer render"/>
+</p>
 
-**Colour scheme (Doron Velta style):** printed parts in **black**. Files starting with **`[a]`** (accent) go in **red**: the slanted pillar bands and the logos. The stock Kossel parts stay **silver** (aluminium frame, rails, arms). **v0.5, not yet built or fit-tested.**
+<p align="center">
+  <img alt="status" src="https://img.shields.io/badge/status-v0.6%20prototype-orange"/>
+  <img alt="printer" src="https://img.shields.io/badge/printer-Kossel%20Linear%20Plus-lightgrey"/>
+  <img alt="board" src="https://img.shields.io/badge/controller-SKR%20Pico%20%2B%20Pi%203B-blue"/>
+  <img alt="license" src="https://img.shields.io/badge/license-GPL--3.0-green"/>
+</p>
 
-## What's in the repo
+---
+
+## Overview
+
+**DVF-ACLP** brings the look of **[Doron Velta](https://github.com/rogerlz/Doron-Velta)** by rogerlz to the Anycubic Kossel Linear Plus.
+
+* The **original Doron Velta skirts, logo, fan grill, fan mount and spool holder** are used as designed. They have only been given hidden mounting points for the Kossel's 2020 rails.
+* New DV-style **corners, tower pillars, top and bottom sections and toolhead** fit the stock Kossel frame, rails, arms, motors and bed.
+* The controller changes to a **BTT SKR Pico + Raspberry Pi 3B** running Klipper.
+* The sides stay open, with no doors or side panels.
+
+| Colour | Used for |
+|---|---|
+| ⬛ **Black** | Main printed parts |
+| 🟥 **Red** | Accent parts. Their files start with **`[a]`**, as in Doron Velta. |
+| ⬜ **Silver** | Stock Kossel aluminium, bought parts |
+
+> 🚧 **Work in progress:** the swap to the original Doron Velta skirts, fan grill and fan mount, the new power box and the plain lid are still being finished. The STL and STEP files here are the v0.5 set until that update lands.
+
+> ⚠️ **Prototype.** The parts are modelled from published dimensions and the original DV files. They have not been built or fit-tested yet. Print the fit-test piece and one corner first.
+
+## Renders
+
+| Top section | Bottom section | Toolhead |
+|:---:|:---:|:---:|
+| <img src="images/render_top.png" width="260"/> | <img src="images/render_bottom.png" width="260"/> | <img src="images/render_toolhead.png" width="200"/> |
+
+## Features
+
+* **Original DV skirts** with the honeycomb grill and the DV logo insert. They mount on the Kossel rails with hidden M4 bosses.
+* **Top section**
+  * The original DV fan mount and red fan grill hold a 60 mm intake fan.
+  * The SKR Pico and Pi 3B sit on a tray under a plain DV-style lid.
+* **Bottom section**
+  * Holds a 12 V box PSU with a mains terminal cover.
+  * The bed deck under the bed separates it from the print area.
+* **Power inlet** on the right side holds an IEC C14 socket with fuse and red rocker switch (screw flange).
+* **DV-style corners** replace the stock Anycubic corners. They fit the stock 2020 extrusions and hold the NEMA17 motors, idlers and endstops.
+* **Tower pillars**
+  * Black covers with the slanted red DV band.
+  * Hollow, so the cables run inside.
+* **DV-style toolhead** for the stock 269 mm arms
+  * Hex shroud with the DV logo.
+  * 3010 hotend fan and twin 4010 part-cooling ducts.
+* **Side extruder bracket** carries the stock Bowden extruder and the original DV spool holder.
+
+## Repository
 
 ```
-STLs/      print files, _xN = how many to print
-STEP/DVF_ACLP_FULL_ASSEMBLY.step   whole printer assembled (open in SolidWorks / Fusion / FreeCAD)
-STEP/parts/                        every printed part as an editable solid
-STEP/panels_cut_3mm/               bottom, bed deck, top deck and lid panels: cut from 3 mm black ACM or plywood
+STLs/                                print files (_xN = quantity, [a] = accent colour)
+STEP/DVF_ACLP_FULL_ASSEMBLY.step     complete printer, open in SolidCraft / SolidWorks / Fusion
+STEP/parts/                          every printed part as an editable solid
+STEP/panels_cut_3mm/                 bottom panel, bed deck, top deck, lid: cut from 3 mm black ACM
+images/                              renders
 ```
 
 ## Print list
 
-| Folder | Part | Qty |
+| Group | Part | Qty |
 |---|---|---:|
-| 00_Fit_Test | deep_skirt_fit_test (print first, check on both lower rails) | 1 |
-| Corners | corner_bottom_motor, corner_top_idler, corner_top_cap | 3 each |
-| Pillars | pillar_lower, pillar_upper (black) | 3 each |
-| Pillars | [a]pillar_band_lower, [a]pillar_band_upper (red, slanted ends like the DV pillars) | 3 each |
-| Skirts_Bottom | bottom_skirt_grill_logo / fan60_intake / power_RIGHT | 4 / 1 / 1 |
-| Skirts_Top | top_skirt_grill_logo / fan60_intake | 5 / 1 |
-| DV_Logo | [a]dv_logo_insert (original DV logo, pushes into the skirt from behind) | 10 |
-| DV_Logo | [a]dv_logo_badge_toolhead | 1 |
-| Base_Power | power_inlet_box, psu_bracket, psu_terminal_cover / bed_standoff | 1 each / 3 |
-| Top_Electronics | skr_pico_pi3b_tray, top_channel, top_channel_lid | 1 each |
-| Toolhead | effector_v6, groove_clamp, dv_shroud / dv_duct_4010 | 1 each / 2 |
-| Extruder | side_extruder_spool_mount (tower B top corner) + dv_spool_holder_ORIGINAL (unchanged DV file, 2× M5) | 1 + 1 |
-| Misc | cable_clip_2020 | 8 |
+| Fit test | `dv_skirt_fit_test`: print first and check it on the lower rails | 1 |
+| Corners | `corner_bottom_motor`, `corner_top_idler`, `corner_top_cap` | 3 each |
+| Pillars | `pillar_lower`, `pillar_upper` | 3 each |
+| Pillars | `[a]pillar_band_lower`, `[a]pillar_band_upper` | 3 each |
+| Bottom skirts (DV) | `dv_bottom_skirt_left`, `dv_bottom_skirt_right`, `dv_bottom_skirt_power_RIGHT` | 2 / 3 / 1 |
+| Top skirts (DV) | `dv_top_skirt_left`, `dv_top_skirt_right` | 2 / 2 |
+| Top skirts (DV) | `dv_top_skirt_fan_left`, `dv_top_skirt_fan_right`, `dv_fan_mount` | 1 each |
+| Accents (DV) | `[a]dv_fan_grill_ORIGINAL` | 1 |
+| Accents (DV) | `[a]dv_logo_insert` | 12 |
+| Accents (DV) | `[a]dv_logo_badge_toolhead` | 1 |
+| Power | `power_inlet_box`, `psu_bracket`, `psu_terminal_cover` | 1 each |
+| Power | `bed_standoff` | 3 |
+| Electronics | `skr_pico_pi3b_tray`, `top_channel`, `top_channel_lid` | 1 each |
+| Toolhead | `effector_v6`, `groove_clamp`, `dv_shroud` | 1 each |
+| Toolhead | `dv_duct_4010` | 2 |
+| Extruder | `side_extruder_spool_mount`, `dv_spool_holder_ORIGINAL` | 1 each |
+| Misc | `cable_clip_2020` | 8 |
 
-Print the corners, skirts and spool mount in PETG or better, and the toolhead and power inlet box in ABS/ASA. The slanted pillar pieces are already turned so the flat end is on the bed. Every printed part fits the Kossel's Ø230 mm bed.
+**Materials:** PETG or better for the frame parts and skirts. ABS/ASA for the toolhead and the power inlet box. Every part fits the Kossel's Ø230 mm bed. The pillar pieces come already turned so their flat end is on the bed.
 
-## Main bought parts
+## Hardware
 
-* BTT SKR Pico v1.0 and Raspberry Pi 3B
-* 12 V 215 × 115 × 50 mm box PSU
-* IEC C14 inlet with fuse + rocker switch (47.5 × 27.5 mm cut-out)
-* 2× 60 mm 12 V fans (top and bottom intake), 1× 3010 fan, 2× 4010 blowers (toolhead)
-* Inserts: M2.5, M3 and M4 heat-set inserts, plus M5 (Ø6.4) for the spool holder
-* Screws: M3, M4 and M5 screws and M4 2020 T-nuts
+| Item | Qty |
+|---|---:|
+| BTT SKR Pico v1.0 (4× TMC2209) + Raspberry Pi 3B | 1 + 1 |
+| 12 V box PSU, 215 × 115 × 50 mm | 1 |
+| IEC C14 inlet with fuse and rocker switch, screw flange (48 × 28 mm cut-out, M3 holes 40 mm apart) | 1 |
+| 60 mm 12 V fan (top intake) / 3010 fan (hotend) / 4010 blower (part cooling) | 1 / 1 / 2 |
+| 3 mm black ACM sheet, about 430 × 370 mm (4 panels) | 4 |
+| M4 × 10 + 2020 T-nuts | ~70 |
+| M4 × 50 (corners → towers) | 12 |
+| M3 screws + M2.5 / M3 / M4 / M5 heat-set inserts | set |
 
-The mains wiring (inlet → fuse/switch → PSU, earth to PSU and frame) must be done unplugged, with the terminal cover fitted.
+> ⚡ **Mains safety:** wire the inlet (fuse and switch) to the PSU only with the printer unplugged. Connect earth to both the PSU and the frame. Fit the terminal cover before switching on.
 
-## Credits and license
+## Before you print
 
-The outer design follows **Doron Velta by rogerlz** (GPL-3.0, fork: [Xanjip32/Doron-Velta](https://github.com/Xanjip32/Doron-Velta)). The DV logo insert and the spool holder are the original Doron Velta files. Every other part is remodelled to fit the Kossel Linear Plus. This kit is also GPL-3.0. It is not an official Voron, Doron Velta or Anycubic project.
+Measure your printer and compare it with these defaults. The design was built from them:
+
+| What | Default |
+|---|---|
+| Horizontal 2020 length | 300 mm |
+| Vertical 2020 length | 720 mm |
+| Spacing between the two lower rails (centre to centre) | 45 mm |
+| Stock arm ball-joint spacing | 46 mm |
+
+## Credits
+
+* **Doron Velta** by [rogerlz](https://github.com/rogerlz/Doron-Velta) (GPL-3.0). The skirts, logo, fan grill, fan mount and spool holder are the original DV files. The DV logo is by @matrixray.
+* Fork: [Xanjip32/Doron-Velta](https://github.com/Xanjip32/Doron-Velta).
+* This project is released under **GPL-3.0**. It is not an official Voron, Doron Velta or Anycubic project.
