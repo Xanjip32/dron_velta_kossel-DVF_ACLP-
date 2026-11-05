@@ -1,72 +1,87 @@
 # DVF-ACLP: Doron Velta Fork for the Anycubic Kossel Linear Plus
 
-A Doron Velta style conversion kit for the **Anycubic Kossel Linear Plus**. It keeps as much of the stock printer as possible and changes the controller to a **BTT SKR Pico v1.0 + Raspberry Pi 3B running Klipper**.
-
-* **Open sides, no closing lid.** No ACM side panels, doors or top covers. Only skirts on the frame rails.
-* **Stock hardware stays:** 2020 frame, plastic corners, MGN12 linear rails and carriages, 269 mm diagonal arms, motors, belts, heated bed, hotend, Bowden extruder, 12 V PSU and clip-on probe.
-* **Everything is parametric.** Measure your printer, edit [`CAD/params.json`](CAD/params.json), and run one script to rebuild every STL/STEP file.
-
-## Full assembly
+A Doron Velta style rebuild of the **Anycubic Kossel Linear Plus**. It uses new printed corners, a closed power base, a top electronics bay and skirts. It keeps the stock **2020 aluminium extrusions, MGN12 rails, motors, belts, arms, bed and hotend**. The controller changes to **BTT SKR Pico v1.0 + Raspberry Pi 3B (Klipper)**. The sides stay open, with no doors or side panels.
 
 ![assembly](images/assembly_full.png)
 
-Open **`CAD/DVF_ACLP_Assembly.step`** in SolidWorks / Fusion / Onshape / FreeCAD, or `CAD/DVF_ACLP_Assembly.FCStd` in FreeCAD. Every printed part (red in the render) is mounted on a simplified stock Kossel Linear Plus: towers, rails, corners, MGN12 rails and carriages, 269 mm arms, bed, motors, hotend, fans, SKR Pico, Pi 3B, extruder and spool. The stock parts are simple blocks for checking fit. They are not exact Anycubic models. The parts are grouped as `Printed_*` and `Stock_*`.
+| Power base | Top electronics bay | Toolhead |
+|---|---|---|
+| ![](images/assembly_base.png) | ![](images/assembly_top.png) | ![](images/assembly_toolhead.png) |
 
-<img src="images/assembly_toolhead.png" width="300"/>
+> ⚠️ **v0.2, not yet built or fit-tested.** All parts are generated from [`CAD/params.json`](CAD/params.json), and several values are estimates (see below). Print `00_Fit_Test` and **one bottom corner** first.
 
-## Printed parts
+## What's new in v0.2
 
-![parts](images/parts_overview.png)
-
-> ⚠️ **Status: v0.1, not fit-tested on a real printer.** Dimensions come from the Anycubic manual, Klipper's Kossel Plus config and common part standards (2020, E3D V6 groove mount, 5015/3010/4010 fans, Pi hole pattern). **Print `00_Fit_Test` first** and check the measurements below before printing everything.
+* **New corners (replace the stock Anycubic corners).**
+  * **Bottom motor corner:** pockets for the two lower 2020 rails and the tower. It has a NEMA17 bay with the shaft pointing to the centre, a belt and pulley opening, a cable duct behind the tower, and rubber-foot recesses.
+  * **Top idler corner:** top rail and tower pockets, an M3 idler axle slot with an adjuster screw, holes for the stock endstop board, M3 inserts for the top panel, and a cable duct.
+  * Each pocket is held with M4 screws into the extrusion slots.
+* **Bottom power base.**
+  * A cut floor panel (`DXFs/bottom_panel_x1.dxf`) holds a standard **12 V 215 × 115 × 50 mm box PSU** with a printed bracket and a **mains terminal cover**.
+  * On the **right half of one side**, a printed **power inlet box** holds an **IEC C14 inlet with fuse and rocker switch**. You plug in and switch on directly there.
+* **Top electronics bay.**
+  * A cut top panel (`DXFs/top_panel_x1.dxf`) carries the **SKR Pico + Pi 3B tray**.
+  * Two printed covers go over it: one with a 40 mm fan over the Pico, one vented over the Pi.
+* **Wiring channels.**
+  * Printed U-channels with press-fit lids run up the outside of tower A.
+  * The cables then go through the duct in the top corner and along a top channel into the cover's cable notch.
+  * The 12 V cable from the PSU goes up this path. Mains stays in the base.
 
 ## Measure these before printing
 
-| Parameter (`params.json`) | Default | What to measure |
+| Parameter | Default | What it is |
 |---|---|---|
-| `frame.bottom_rail_pitch` | 45 | Centre-to-centre distance between the two lower horizontal 2020 rails |
-| `skirt.span` | 240 | Free outer rail length between two corner housings (skirt = 2 halves) |
-| `effector.arm_spacing` | 46 | Centre-to-centre distance between the two ball joints of one arm pair, **measured on your stock carriage** (it must match) |
-| `effector.offset` | 30 | Effector centre to the arm-joint axis |
-| `foot.corner_clear` | 55 | Corner vertex to the first exposed spot on a bottom rail |
+| `frame.rail_len` | 300 | Length of the horizontal 2020s (Anycubic manual) |
+| `frame.tower_len` | 720 | Length of the vertical 2020s. **Measure.** |
+| `frame.bottom_rail_pitch` | 45 | Centre-to-centre of the two lower rails. **Measure.** |
+| `corner.tower_from_vertex` | 70 | Sets the tower position, and so the delta radius |
+| `power.psu_*` | 215 / 115 / 50 | Your PSU's size |
+| `power.iec_*` | 47.5 × 27.5 | Panel cut-out of your IEC inlet/switch module |
+| `effector.arm_spacing` | 46 | Ball-joint spacing of your stock arms/carriages |
 
-## Print list
+With these defaults, Klipper starts at `delta_radius ≈ 122.8` with `arm_length 269`. Then run `DELTA_CALIBRATE`.
 
-| Folder | File | Qty | Notes |
+## Print / cut list
+
+| Folder | Part | Qty | Notes |
 |---|---|---:|---|
-| 00_Fit_Test | fit_test_coupon | 1 | Print first. Bolt it to both lower rails. |
-| Skirts | bottom_skirt_half | 3 | Covers both lower rails, honeycomb between them |
-| Skirts | bottom_skirt_badge_half | 2 | Has a pocket for the logo badge next to the joint |
-| Skirts | bottom_skirt_ports_half | 1 | Opening for USB / power / cables. Put it on the electronics side. |
-| Skirts | top_skirt_half | 6 | Crown above the top rails, hides the idlers |
-| Skirts | logo_badge | 2 | Glue into the badge pocket. Print in an accent colour. |
-| Frame | foot | 3 | Bolts under the two lower rails at each corner. Add a 32 mm rubber pad. |
-| Frame | endstop_mount | 3 | Optional, adjustable holder for the stock microswitch boards |
-| Frame | cable_clip_2020 | 12 | M4 + T-nut |
-| Toolhead | effector_v6 | 1 | New effector. The hotend slides in from the side into the 12 mm groove. |
-| Toolhead | groove_clamp | 1 | Locks the top collar. Its key fills the entry slot. |
-| Toolhead | hotend_shroud_3010 | 1 | Under the effector. 30 mm heatsink fan. |
-| Toolhead | part_fan_duct_5015 | 1 | Push-fit on the 5015 outlet, screws to the shroud ear |
-| Electronics | skr_pico_pi3b_plate | 1 | SKR Pico + Pi 3B side by side, M2.5 heat-set inserts |
-| Electronics | fan_bracket_4010 | 1 | Electronics cooling fan |
-| Extruder | bowden_extruder_mount | 1 | NEMA17 plate for the stock extruder, bolts to 2020 |
-| Extruder | spool_holder | 1 | Top-rail spool arm |
+| 00_Fit_Test | fit_test_coupon | 1 | Check the skirt fit on the rails |
+| Corners | corner_bottom_motor | 3 | 4–5 walls, 25 % gyroid. Print standing on its base. |
+| Corners | corner_top_idler | 3 | Same settings |
+| Skirts | bottom_skirt_half / badge_half | 3 / 2 | |
+| Skirts | bottom_skirt_power_half_RIGHT | 1 | Right half of the power side, with the port and 2 M3 holes |
+| Skirts | top_skirt_half | 6 | |
+| Skirts | logo_badge | 2 | Accent colour, glue in |
+| Base_Power | power_inlet_box | 1 | Bolts on the outside of the power skirt. Holds the IEC inlet + switch. |
+| Base_Power | psu_bracket | 1 | Holds the PSU end opposite the terminals |
+| Base_Power | psu_terminal_cover | 1 | Covers the mains terminals. Don't skip it. |
+| Top_Electronics | skr_pico_pi3b_tray | 1 | M2.5 heat-set inserts |
+| Top_Electronics | top_cover_half_fan_pico / vented_pi | 1 / 1 | Print roof-down |
+| Wiring | tower_channel + lid | 4 + 4 | Tower A, M4 + T-nuts |
+| Wiring | top_channel + lid | 1 + 1 | On the top panel |
+| Wiring | cable_clip_2020 | 8 | |
+| Toolhead | effector_v6, groove_clamp, hotend_shroud_3010, part_fan_duct_5015 | 1 each | Temporary. See the toolhead note. |
+| Extruder | bowden_extruder_mount, spool_holder | 1 each | On the top panel |
+| **DXFs** | bottom_panel, top_panel | 1 each | 3 mm ACM or 4 mm plywood, CNC/laser/jigsaw (about 430 × 370 mm) |
 
-Print settings: PETG or ABS/ASA, 0.2 mm layers, 4 walls, 30–40 % infill. Use ABS/ASA for the toolhead parts. The skirts print **front face down**.
+All printed parts fit inside the Kossel's Ø230 mm print area. Use PETG at minimum, and ABS/ASA for the toolhead and the power inlet box.
+
+## Toolhead
+
+Doron Velta R2 uses **[CraneFly by chirpy](https://github.com/chirpy2605/voron/tree/main/general/CraneFly)**, and before that the MiniSB. CraneFly is built for the FLSUN Q5-style magnetic-ball arms that Doron Velta uses (215 mm). The Kossel's stock 269 mm arms use a different joint, so CraneFly won't bolt onto your arms as they are. The included `effector_v6` works with your stock arms until you choose a toolhead.
 
 ## Files
 
 ```
-CAD/build_dvf.py      parametric generator (FreeCAD 1.x Python)
-CAD/params.json       all dimensions
-CAD/DVF_ACLP.FCStd    FreeCAD document with every part (print orientation)
-CAD/DVF_ACLP_Assembly.step / .FCStd   full assembled printer
-CAD/build_assembly.py builds the assembly from the same params
-CAD/STEP/*.step       editable solids (import into SolidWorks / Fusion / Onshape)
-STLs/**               print files, _xN = quantity
-Firmware/printer.cfg  Klipper config for SKR Pico on the Kossel Linear Plus
-Docs/wiring.md        SKR Pico + Pi 3B wiring
-BOM.md                hardware list
+CAD/build_dvf.py, CAD/v2_parts.py   parametric part generator (FreeCAD 1.x Python)
+CAD/build_assembly.py               full printer assembly
+CAD/params.json                     all dimensions
+CAD/DVF_ACLP_Assembly.step / .FCStd full assembled printer (open in SolidWorks/Fusion/FreeCAD)
+CAD/DVF_ACLP.FCStd                  all parts in print orientation
+CAD/STEP/*.step                     each part (and both panels) as editable solids
+DXFs/*.dxf                          bottom and top panel cut files
+STLs/**                             print files, _xN = quantity
+Firmware/printer.cfg, Docs/wiring.md, BOM.md
 ```
 
 Rebuild after changing params:
@@ -76,6 +91,10 @@ Rebuild after changing params:
 "C:\Program Files\FreeCAD 1.1\bin\python.exe" CAD/build_assembly.py
 ```
 
+## Printed parts
+
+![parts](images/parts_overview.png)
+
 ## Credits and license
 
-Inspired by [Doron Velta by rogerlz](https://github.com/rogerlz/Doron-Velta) (forked at [Xanjip32/Doron-Velta](https://github.com/Xanjip32/Doron-Velta)). The Doron Velta frame is a 2040/ACM build, so its parts cannot bolt onto a Kossel. These parts are new designs in the same style, sized for the Kossel. The SKR Pico/Pi hole pattern (58 × 49 mm) was measured from the original `skr_pico_mount`. The Klipper config is based on Klipper's `printer-anycubic-kossel-plus-2017.cfg`. GPL-3.0, same as Doron Velta. This is not an official Voron, Doron Velta or Anycubic project.
+Inspired by [Doron Velta by rogerlz](https://github.com/rogerlz/Doron-Velta) (fork: [Xanjip32/Doron-Velta](https://github.com/Xanjip32/Doron-Velta)). The parts are new designs in that style, sized for Kossel 2020 extrusions. The Klipper config is based on Klipper's `printer-anycubic-kossel-plus-2017.cfg`. GPL-3.0. This is not an official Voron, Doron Velta or Anycubic project.
