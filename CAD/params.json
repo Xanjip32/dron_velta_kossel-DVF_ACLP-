@@ -1,0 +1,61 @@
+{
+  "_note": "All sizes in mm. Measure your printer and change these, then re-run build_dvf.py.",
+  "frame": {
+    "extrusion": 20,
+    "bottom_rail_pitch": 45
+  },
+  "skirt": {
+    "span": 240,
+    "joint_gap": 1,
+    "thickness": 3.2,
+    "bottom_overlap_below": 1,
+    "top_margin": 3,
+    "top_overlap_below": 2,
+    "crown_rise": 26,
+    "mount_inset": 18,
+    "slot_travel": 6,
+    "hex_r": 4.2,
+    "hex_wall": 1.8,
+    "badge_r": 10,
+    "badge_depth": 1.4,
+    "port_w": 34,
+    "port_h": 20
+  },
+  "foot": {
+    "corner_clear": 55,
+    "arm_len": 40,
+    "thickness": 12
+  },
+  "endstop": {
+    "hole_pitch": 19,
+    "switch_drop": 18
+  },
+  "effector": {
+    "offset": 30,
+    "arm_spacing": 46,
+    "joint_clear": 5,
+    "plate_t": 6,
+    "tab_h": 10,
+    "groove_d": 12,
+    "collar_d": 16,
+    "collar_h": 3.7,
+    "clamp_r": 14,
+    "acc_r": 22,
+    "bowden_hole": 7,
+    "heatsink_d": 22.3,
+    "heatsink_h": 26
+  },
+  "duct": {
+    "outlet_w": 19.5,
+    "outlet_h": 15.5,
+    "nozzle_w": 14,
+    "nozzle_h": 3.5,
+    "length": 30,
+    "drop": 14
+  },
+  "electronics": {
+    "plate_w": 200,
+    "plate_h": 80,
+    "standoff_h": 6
+  }
+}
