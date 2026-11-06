@@ -43,6 +43,7 @@
 * **Top section**
   * The original DV fan mount and red fan grill hold a 60 mm intake fan.
   * The SKR Pico and Pi 3B sit on a tray under a plain DV-style lid.
+  * The stock Kossel 2004 LCD sits in a tilted case on the front of the lid.
 * **Bottom section**
   * Holds a 12 V box PSU with a mains terminal cover.
   * The bed deck under the bed separates it from the print area.
@@ -83,6 +84,7 @@ images/                              renders
 | Power | `power_inlet_box`, `psu_bracket`, `psu_terminal_cover` | 1 each |
 | Power | `bed_standoff` | 3 |
 | Electronics | `skr_pico_pi3b_tray`, `top_channel`, `top_channel_lid` | 1 each |
+| Electronics | `lcd_case_front`, `lcd_case_back` (stock Kossel LCD, front of the lid) | 1 each |
 | Toolhead | `effector_v6`, `groove_clamp`, `dv_shroud` | 1 each |
 | Toolhead | `dv_duct_4010` | 2 |
 | Extruder | `side_extruder_spool_mount`, `dv_spool_holder_ORIGINAL` | 1 each |
@@ -104,6 +106,47 @@ images/                              renders
 | M3 screws + M2.5 / M3 / M4 / M5 heat-set inserts | set |
 
 > ⚡ **Mains safety:** wire the inlet (fuse and switch) to the PSU only with the printer unplugged. Connect earth to both the PSU and the frame. Fit the terminal cover before switching on.
+
+## Stock LCD (RepRapDiscount 2004 Smart Controller)
+
+The LCD that came with the Kossel sits in a printed case on the front of the lid, tilted back 20°. The case bolts to the lid with 2× M3, and the ribbon cables drop through a slot in the lid.
+
+* **Case:** 4× M3 into the PCB standoffs and 4× M3 for the back cover.
+* **Measure first:** the case is built for a 150 × 55 mm board with mounting holes 144 × 49 mm apart. Check your board.
+
+The **SKR Pico has no EXP1/EXP2 LCD connectors**, so the LCD wires to the **Raspberry Pi GPIO**. Klipper runs the Pi as a second MCU for it (Klipper's "RPi microcontroller" guide). Use the **EXP1** connector:
+
+| LCD (EXP1) | Pi GPIO (BCM) | Pi pin |
+|---|---|---:|
+| 5V / GND | 5V / GND | 2 / 6 |
+| LCD RS | GPIO5 | 29 |
+| LCD E | GPIO6 | 31 |
+| D4 / D5 / D6 / D7 | GPIO13 / GPIO19 / GPIO26 / GPIO21 | 33 / 35 / 37 / 40 |
+| Encoder click | GPIO12 | 32 |
+| Beeper | GPIO25 | 22 |
+
+**EXP2** has the encoder A/B pins. Wire them to **GPIO20 / GPIO16** (pins 38 / 36).
+
+```ini
+[mcu rpi]
+serial: /tmp/klipper_host_mcu
+
+[display]
+lcd_type: hd44780
+rs_pin: rpi:gpio5
+e_pin: rpi:gpio6
+d4_pin: rpi:gpio13
+d5_pin: rpi:gpio19
+d6_pin: rpi:gpio26
+d7_pin: rpi:gpio21
+encoder_pins: ^rpi:gpio20, ^rpi:gpio16
+click_pin: ^!rpi:gpio12
+
+[output_pin beeper]
+pin: rpi:gpio25
+```
+
+The Pi's GPIO pins are 3.3 V. The 2004 LCD only reads these signals and works at 3.3 V logic. Never connect any LCD 5 V line to a Pi GPIO pin.
 
 ## Before you print
 
